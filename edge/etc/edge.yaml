@@ -1,0 +1,15 @@
+Name: edge.rpc
+ListenOn: 0.0.0.0:8888
+TCPListenOn: 0.0.0.0:9898
+SendChanSize: 1024
+
+Etcd:
+  Hosts:
+  - 118.89.66.104:2379
+  Key: edge.rpc
+
+IMRpc:
+  Etcd:    
+    Hosts:      
+    - 118.89.66.104:2379
+    Key: imrpc.rpc

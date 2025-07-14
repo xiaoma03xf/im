@@ -3,6 +3,7 @@ package socket
 import (
 	"crypto/tls"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"strings"
@@ -50,6 +51,7 @@ func (s *Server) Accept() (*libnet.Session, error) {
 			}
 		}
 
+		fmt.Printf("session conn successfully:%v\n", conn.RemoteAddr())
 		return libnet.NewSession(s.Manager, s.Protocol.NewCodec(conn), s.SendChanSize), nil
 	}
 }

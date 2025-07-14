@@ -7,8 +7,6 @@ import (
 	"io"
 	"net"
 	"time"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 const maxBodySize = 1 << 12
@@ -142,9 +140,10 @@ func (c *imCodec) Receive() (*Message, error) {
 	msg.ServiceId = binary.BigEndian.Uint16(buf[serviceIdOffset:cmdOffset]) // 消息类型长度 2bytes
 	msg.Cmd = binary.BigEndian.Uint16(buf[cmdOffset:seqOffset])             // 命令长度 2bytes
 	msg.Seq = binary.BigEndian.Uint32(buf[seqOffset:bodyOffset])            // 序列号类型长度 4bytes
-	logx.Infof("msg.Seq:%+v", msg.Seq)
+	// logx.Infof("msg.Seq:%+v", msg.Seq)
 
 	if headerLen != rawHeaderSize {
+		fmt.Printf("expected headerLen:%v, actually headerSize:%v\n", rawHeaderSize, headerLen)
 		return nil, ErrRawPackLen
 	}
 
@@ -152,13 +151,13 @@ func (c *imCodec) Receive() (*Message, error) {
 		msg.Body = buf[bodyOffset:packLen]
 	}
 
-	logx.Infof("receive msg:%+v", msg)
+	// logx.Infof("receive msg:%+v", msg)
 	return &msg, nil
 }
 
 func (c *imCodec) Send(msg Message) error {
 	packLen := headerSize + rawHeaderSize + len(msg.Body)
-	packLenBuf := make([]byte, packLen)
+	packLenBuf := make([]byte, packSize)
 	binary.BigEndian.PutUint32(packLenBuf[:packSize], uint32(packLen))
 
 	buf := make([]byte, packLen)

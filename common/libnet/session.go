@@ -82,6 +82,12 @@ func (s *Session) Receive() (*Message, error) {
 func (s *Session) Send(msg Message) error {
 	return nil
 }
+
+// For test
+func (s *Session) SendSample(msg Message) error {
+	return s.codec.Send(msg)
+}
+
 func (s *Session) IsClosed() bool {
 	return atomic.LoadInt32(&s.closeFlag) == 1
 }
