@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"zeroim/common/discovery"
 	"zeroim/common/libnet"
 	"zeroim/common/socket"
 	"zeroim/edge/internal/svc"
@@ -48,4 +49,9 @@ func (srv *TCPServer) handleRequest(session *libnet.Session) {
 }
 func (srv *TCPServer) Close() {
 	srv.Server.Close()
+}
+
+func (srv *TCPServer) KqHeart() {
+	work := discovery.NewQueueWorker(srv.svcCtx.Config.Etcd.Key, srv.svcCtx.Config.Etcd.Hosts, srv.svcCtx.Config.KqConf)
+	work.HeartBeat()
 }

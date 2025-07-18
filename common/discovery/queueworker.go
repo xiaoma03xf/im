@@ -12,8 +12,8 @@ import (
 
 type QueueWorker struct {
 	key    string
-	kqConf kq.KqConf
-	client *clientv3.Client
+	kqConf kq.KqConf        // 存储在etcd中的kafka配置信息, 连接信息
+	client *clientv3.Client // etcd client
 }
 
 func NewQueueWorker(key string, endpoints []string, kqConf kq.KqConf) *QueueWorker {
