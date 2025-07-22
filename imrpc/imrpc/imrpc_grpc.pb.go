@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Imrpc_Login_FullMethodName  = "/imrpc.Imrpc/Login"
-	Imrpc_Logout_FullMethodName = "/imrpc.Imrpc/Logout"
+	Imrpc_Login_FullMethodName       = "/imrpc.Imrpc/Login"
+	Imrpc_Logout_FullMethodName      = "/imrpc.Imrpc/Logout"
+	Imrpc_PostMessage_FullMethodName = "/imrpc.Imrpc/PostMessage"
 )
 
 // ImrpcClient is the client API for Imrpc service.
@@ -29,6 +30,7 @@ const (
 type ImrpcClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
+	PostMessage(ctx context.Context, in *PostMsg, opts ...grpc.CallOption) (*PostReponse, error)
 }
 
 type imrpcClient struct {
@@ -59,12 +61,23 @@ func (c *imrpcClient) Logout(ctx context.Context, in *LogoutRequest, opts ...grp
 	return out, nil
 }
 
+func (c *imrpcClient) PostMessage(ctx context.Context, in *PostMsg, opts ...grpc.CallOption) (*PostReponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PostReponse)
+	err := c.cc.Invoke(ctx, Imrpc_PostMessage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ImrpcServer is the server API for Imrpc service.
 // All implementations must embed UnimplementedImrpcServer
 // for forward compatibility.
 type ImrpcServer interface {
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
+	PostMessage(context.Context, *PostMsg) (*PostReponse, error)
 	mustEmbedUnimplementedImrpcServer()
 }
 
@@ -80,6 +93,9 @@ func (UnimplementedImrpcServer) Login(context.Context, *LoginRequest) (*LoginRes
 }
 func (UnimplementedImrpcServer) Logout(context.Context, *LogoutRequest) (*LogoutResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
+}
+func (UnimplementedImrpcServer) PostMessage(context.Context, *PostMsg) (*PostReponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PostMessage not implemented")
 }
 func (UnimplementedImrpcServer) mustEmbedUnimplementedImrpcServer() {}
 func (UnimplementedImrpcServer) testEmbeddedByValue()               {}
@@ -138,6 +154,24 @@ func _Imrpc_Logout_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Imrpc_PostMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PostMsg)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ImrpcServer).PostMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Imrpc_PostMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ImrpcServer).PostMessage(ctx, req.(*PostMsg))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Imrpc_ServiceDesc is the grpc.ServiceDesc for Imrpc service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +186,10 @@ var Imrpc_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Logout",
 			Handler:    _Imrpc_Logout_Handler,
+		},
+		{
+			MethodName: "PostMessage",
+			Handler:    _Imrpc_PostMessage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

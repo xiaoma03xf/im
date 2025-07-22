@@ -3,30 +3,56 @@ package svc
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"sync"
 	"time"
+	"zeroim/common/discovery"
 	"zeroim/imrpc/internal/config"
 
 	"github.com/zeromicro/go-queue/kq"
 	"github.com/zeromicro/go-zero/core/discov"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/redis"
+	"github.com/zeromicro/go-zero/core/threading"
 	clientv3 "go.etcd.io/etcd/client/v3"
 )
 
 type ServiceContext struct {
 	Config    config.Config
+	BizRedis  *redis.Redis
 	QueueList *QueueList
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
+	// 第一次初始化
+	queueList := GetQueueList(c.QueueEtcd)
+	threading.GoSafe(func() {
+		discovery.QueueDiscoveryProc(c.QueueEtcd, queueList)
+	})
+	rds, err := redis.NewRedis(redis.RedisConf{
+		Host: c.BizRedis.Host,
+		Pass: c.BizRedis.Pass,
+		Type: c.BizRedis.Type,
+	})
+	if err != nil {
+		panic(err)
+	}
 	return &ServiceContext{
-		Config: c,
+		Config:    c,
+		QueueList: queueList,
+		BizRedis:  rds,
 	}
 }
 
 type QueueList struct {
-	mu  sync.Mutex
 	kqs map[string]*kq.Pusher
+	l   sync.Mutex
+}
+
+func (q *QueueList) PrintlnKVS() {
+	for k, v := range q.kqs {
+		fmt.Printf("key:%v, val:%v\n", k, v)
+	}
 }
 
 func NewQueueList() *QueueList {
@@ -34,26 +60,28 @@ func NewQueueList() *QueueList {
 		kqs: make(map[string]*kq.Pusher),
 	}
 }
+
 func (q *QueueList) Update(key string, data kq.KqConf) {
 	edgeQueue := kq.NewPusher(data.Brokers, data.Topic)
-	q.mu.Lock()
+	q.l.Lock()
 	q.kqs[key] = edgeQueue
-	q.mu.Unlock()
+	q.l.Unlock()
 }
 
 func (q *QueueList) Delete(key string) {
-	q.mu.Lock()
+	q.l.Lock()
 	delete(q.kqs, key)
-	q.mu.Unlock()
+	q.l.Unlock()
 }
 
 func (q *QueueList) Load(key string) (*kq.Pusher, bool) {
-	q.mu.Lock()
-	defer q.mu.Unlock()
+	q.l.Lock()
+	defer q.l.Unlock()
 
 	edgeQueue, ok := q.kqs[key]
 	return edgeQueue, ok
 }
+
 func GetQueueList(conf discov.EtcdConf) *QueueList {
 	ql := NewQueueList()
 	cli, err := clientv3.New(clientv3.Config{
@@ -67,6 +95,7 @@ func GetQueueList(conf discov.EtcdConf) *QueueList {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
+	// 通过key前缀获取kv对, key == edge
 	res, err := cli.Get(ctx, conf.Key, clientv3.WithPrefix())
 	if err != nil {
 		panic(err)
@@ -82,9 +111,10 @@ func GetQueueList(conf discov.EtcdConf) *QueueList {
 		}
 		edgeQueue := kq.NewPusher(data.Brokers, data.Topic)
 
-		ql.mu.Lock()
+		ql.l.Lock()
 		ql.kqs[string(kv.Key)] = edgeQueue
-		ql.mu.Unlock()
+		ql.l.Unlock()
 	}
+
 	return ql
 }

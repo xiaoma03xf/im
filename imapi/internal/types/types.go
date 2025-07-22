@@ -3,10 +3,13 @@
 
 package types
 
-type Request struct {
-	Name string `path:"name,options=you|me"`
+type SendMsgRequest struct {
+	ToUserId int64  `json:"toUserId"`
+	Content  string `json:"content"`
 }
 
-type Response struct {
-	Message string `json:"message"`
+type SendMsgResponse struct {
+	Id         int64  `json:"id"`
+	CreateTime int64  `json:"createTime"`
+	Content    string `json:"content"`
 }

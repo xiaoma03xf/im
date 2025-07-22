@@ -40,7 +40,7 @@ func (q *QueueWorker) HeartBeat() {
 	q.register(string(value), context.Background())
 }
 func (q *QueueWorker) register(value string, ctx context.Context) {
-	leaseGrantResp, err := q.client.Grant(ctx, 45)
+	leaseGrantResp, err := q.client.Grant(ctx, 600)
 	if err != nil {
 		panic(err)
 	}

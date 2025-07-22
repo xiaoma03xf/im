@@ -1,6 +1,17 @@
 Name: imrpc.rpc
-ListenOn: 0.0.0.0:8080
+ListenOn: 0.0.0.0:8888
 Etcd:
   Hosts:
-  - 118.89.66.104:2379
+  - 127.0.0.1:2379
   Key: imrpc.rpc
+
+QueueEtcd:
+  Hosts:
+    - 127.0.0.1:2379
+  Key: edge
+BizRedis:
+  Host: 127.0.0.1:6379
+  Type: node
+AuthConfig:
+  AccessSecret: "12345678"
+

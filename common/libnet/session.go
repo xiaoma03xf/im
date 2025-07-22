@@ -60,6 +60,9 @@ func (s *Session) Token() string {
 func (s *Session) Session() session.Session {
 	return session.NewSession(s.manager.Name, s.token, s.id)
 }
+func (s *Session) SetToken(token string) {
+	s.token = token
+}
 func (s *Session) sendLoop() {
 	defer s.Close()
 	for {
@@ -80,7 +83,18 @@ func (s *Session) Receive() (*Message, error) {
 	return s.codec.Receive()
 }
 func (s *Session) Send(msg Message) error {
-	return nil
+	if s.IsClosed() {
+		return SessionClosedError
+	}
+	if s.sendChan == nil {
+		return s.codec.Send(msg)
+	}
+	select {
+	case s.sendChan <- msg:
+		return nil
+	default:
+		return SessionBlockedError
+	}
 }
 
 // For test

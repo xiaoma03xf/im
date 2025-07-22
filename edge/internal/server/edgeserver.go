@@ -8,7 +8,6 @@ import (
 	"context"
 
 	"zeroim/edge/edge"
-	"zeroim/edge/internal/logic"
 	"zeroim/edge/internal/svc"
 )
 
@@ -24,6 +23,7 @@ func NewEdgeServer(svcCtx *svc.ServiceContext) *EdgeServer {
 }
 
 func (s *EdgeServer) Ping(ctx context.Context, in *edge.Request) (*edge.Response, error) {
-	l := logic.NewPingLogic(ctx, s.svcCtx)
-	return l.Ping(in)
+	// l := logic.NewMqLogic(ctx, s.svcCtx)
+	// return l.Ping(in)
+	return nil, nil
 }

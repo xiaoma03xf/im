@@ -32,3 +32,8 @@ func (s *ImrpcServer) Logout(ctx context.Context, in *imrpc.LogoutRequest) (*imr
 	l := logic.NewLogoutLogic(ctx, s.svcCtx)
 	return l.Logout(in)
 }
+
+func (s *ImrpcServer) PostMessage(ctx context.Context, in *imrpc.PostMsg) (*imrpc.PostReponse, error) {
+	l := logic.NewPostMessageLogic(ctx, s.svcCtx)
+	return l.PostMessage(in)
+}

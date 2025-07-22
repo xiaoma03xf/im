@@ -221,6 +221,182 @@ func (x *LogoutResponse) GetBody() []byte {
 	return nil
 }
 
+type PostMsg struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Version       uint32                 `protobuf:"varint,1,opt,name=Version,proto3" json:"Version,omitempty"`
+	Status        uint32                 `protobuf:"varint,2,opt,name=Status,proto3" json:"Status,omitempty"`
+	ServiceId     uint32                 `protobuf:"varint,3,opt,name=ServiceId,proto3" json:"ServiceId,omitempty"`
+	Cmd           uint32                 `protobuf:"varint,4,opt,name=Cmd,proto3" json:"Cmd,omitempty"`
+	Seq           uint32                 `protobuf:"varint,5,opt,name=Seq,proto3" json:"Seq,omitempty"`
+	Token         string                 `protobuf:"bytes,6,opt,name=Token,proto3" json:"Token,omitempty"`
+	ToToken       string                 `protobuf:"bytes,7,opt,name=ToToken,proto3" json:"ToToken,omitempty"`
+	SessionId     string                 `protobuf:"bytes,8,opt,name=SessionId,proto3" json:"SessionId,omitempty"`
+	Timestamp     int64                  `protobuf:"varint,9,opt,name=Timestamp,proto3" json:"Timestamp,omitempty"`
+	Msg           string                 `protobuf:"bytes,10,opt,name=Msg,proto3" json:"Msg,omitempty"` // 消息内容
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PostMsg) Reset() {
+	*x = PostMsg{}
+	mi := &file_imrpc_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PostMsg) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PostMsg) ProtoMessage() {}
+
+func (x *PostMsg) ProtoReflect() protoreflect.Message {
+	mi := &file_imrpc_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PostMsg.ProtoReflect.Descriptor instead.
+func (*PostMsg) Descriptor() ([]byte, []int) {
+	return file_imrpc_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *PostMsg) GetVersion() uint32 {
+	if x != nil {
+		return x.Version
+	}
+	return 0
+}
+
+func (x *PostMsg) GetStatus() uint32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+func (x *PostMsg) GetServiceId() uint32 {
+	if x != nil {
+		return x.ServiceId
+	}
+	return 0
+}
+
+func (x *PostMsg) GetCmd() uint32 {
+	if x != nil {
+		return x.Cmd
+	}
+	return 0
+}
+
+func (x *PostMsg) GetSeq() uint32 {
+	if x != nil {
+		return x.Seq
+	}
+	return 0
+}
+
+func (x *PostMsg) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+func (x *PostMsg) GetToToken() string {
+	if x != nil {
+		return x.ToToken
+	}
+	return ""
+}
+
+func (x *PostMsg) GetSessionId() string {
+	if x != nil {
+		return x.SessionId
+	}
+	return ""
+}
+
+func (x *PostMsg) GetTimestamp() int64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
+func (x *PostMsg) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
+}
+
+type PostReponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          uint32                 `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Desc          string                 `protobuf:"bytes,2,opt,name=desc,proto3" json:"desc,omitempty"`
+	Data          []byte                 `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PostReponse) Reset() {
+	*x = PostReponse{}
+	mi := &file_imrpc_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PostReponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PostReponse) ProtoMessage() {}
+
+func (x *PostReponse) ProtoReflect() protoreflect.Message {
+	mi := &file_imrpc_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PostReponse.ProtoReflect.Descriptor instead.
+func (*PostReponse) Descriptor() ([]byte, []int) {
+	return file_imrpc_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *PostReponse) GetCode() uint32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *PostReponse) GetDesc() string {
+	if x != nil {
+		return x.Desc
+	}
+	return ""
+}
+
+func (x *PostReponse) GetData() []byte {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
 var File_imrpc_proto protoreflect.FileDescriptor
 
 const file_imrpc_proto_rawDesc = "" +
@@ -236,10 +412,27 @@ const file_imrpc_proto_rawDesc = "" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12\x1c\n" +
 	"\tsessionId\x18\x02 \x01(\tR\tsessionId\"$\n" +
 	"\x0eLogoutResponse\x12\x12\n" +
-	"\x04body\x18\x01 \x01(\fR\x04body2r\n" +
+	"\x04body\x18\x01 \x01(\fR\x04body\"\xfb\x01\n" +
+	"\aPostMsg\x12\x18\n" +
+	"\aVersion\x18\x01 \x01(\rR\aVersion\x12\x16\n" +
+	"\x06Status\x18\x02 \x01(\rR\x06Status\x12\x1c\n" +
+	"\tServiceId\x18\x03 \x01(\rR\tServiceId\x12\x10\n" +
+	"\x03Cmd\x18\x04 \x01(\rR\x03Cmd\x12\x10\n" +
+	"\x03Seq\x18\x05 \x01(\rR\x03Seq\x12\x14\n" +
+	"\x05Token\x18\x06 \x01(\tR\x05Token\x12\x18\n" +
+	"\aToToken\x18\a \x01(\tR\aToToken\x12\x1c\n" +
+	"\tSessionId\x18\b \x01(\tR\tSessionId\x12\x1c\n" +
+	"\tTimestamp\x18\t \x01(\x03R\tTimestamp\x12\x10\n" +
+	"\x03Msg\x18\n" +
+	" \x01(\tR\x03Msg\"I\n" +
+	"\vPostReponse\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\rR\x04code\x12\x12\n" +
+	"\x04desc\x18\x02 \x01(\tR\x04desc\x12\x12\n" +
+	"\x04data\x18\x03 \x01(\fR\x04data2\xa5\x01\n" +
 	"\x05Imrpc\x122\n" +
 	"\x05Login\x12\x13.imrpc.LoginRequest\x1a\x14.imrpc.LoginResponse\x125\n" +
-	"\x06Logout\x12\x14.imrpc.LogoutRequest\x1a\x15.imrpc.LogoutResponseB\tZ\a./imrpcb\x06proto3"
+	"\x06Logout\x12\x14.imrpc.LogoutRequest\x1a\x15.imrpc.LogoutResponse\x121\n" +
+	"\vPostMessage\x12\x0e.imrpc.PostMsg\x1a\x12.imrpc.PostReponseB\tZ\a./imrpcb\x06proto3"
 
 var (
 	file_imrpc_proto_rawDescOnce sync.Once
@@ -253,20 +446,24 @@ func file_imrpc_proto_rawDescGZIP() []byte {
 	return file_imrpc_proto_rawDescData
 }
 
-var file_imrpc_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_imrpc_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_imrpc_proto_goTypes = []any{
 	(*LoginRequest)(nil),   // 0: imrpc.LoginRequest
 	(*LoginResponse)(nil),  // 1: imrpc.LoginResponse
 	(*LogoutRequest)(nil),  // 2: imrpc.LogoutRequest
 	(*LogoutResponse)(nil), // 3: imrpc.LogoutResponse
+	(*PostMsg)(nil),        // 4: imrpc.PostMsg
+	(*PostReponse)(nil),    // 5: imrpc.PostReponse
 }
 var file_imrpc_proto_depIdxs = []int32{
 	0, // 0: imrpc.Imrpc.Login:input_type -> imrpc.LoginRequest
 	2, // 1: imrpc.Imrpc.Logout:input_type -> imrpc.LogoutRequest
-	1, // 2: imrpc.Imrpc.Login:output_type -> imrpc.LoginResponse
-	3, // 3: imrpc.Imrpc.Logout:output_type -> imrpc.LogoutResponse
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	4, // 2: imrpc.Imrpc.PostMessage:input_type -> imrpc.PostMsg
+	1, // 3: imrpc.Imrpc.Login:output_type -> imrpc.LoginResponse
+	3, // 4: imrpc.Imrpc.Logout:output_type -> imrpc.LogoutResponse
+	5, // 5: imrpc.Imrpc.PostMessage:output_type -> imrpc.PostReponse
+	3, // [3:6] is the sub-list for method output_type
+	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -283,7 +480,7 @@ func file_imrpc_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_imrpc_proto_rawDesc), len(file_imrpc_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

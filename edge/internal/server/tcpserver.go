@@ -1,11 +1,12 @@
 package server
 
 import (
-	"fmt"
 	"zeroim/common/discovery"
-	"zeroim/common/libnet"
 	"zeroim/common/socket"
+	"zeroim/edge/client"
 	"zeroim/edge/internal/svc"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type TCPServer struct {
@@ -13,13 +14,8 @@ type TCPServer struct {
 	Server *socket.Server
 }
 
-func NewTCPServer(svcCtx *svc.ServiceContext) (*TCPServer, error) {
-	protocol := libnet.NewIMProtocol()
-	s, err := socket.NewServe(svcCtx.Config.Name, svcCtx.Config.TCPListenOn, protocol, svcCtx.Config.SendChanSize)
-	if err != nil {
-		return nil, err
-	}
-	return &TCPServer{svcCtx: svcCtx, Server: s}, nil
+func NewTCPServer(svcCtx *svc.ServiceContext) *TCPServer {
+	return &TCPServer{svcCtx: svcCtx}
 }
 
 func (srv *TCPServer) HandleRequest() {
@@ -28,27 +24,42 @@ func (srv *TCPServer) HandleRequest() {
 		if err != nil {
 			panic(err)
 		}
-		go srv.handleRequest(session)
+		cli := client.NewClient(srv.Server.Manager, session, srv.svcCtx.IMRpc)
+		go srv.sessionLoop(cli)
 	}
 }
 
-func (srv *TCPServer) handleRequest(session *libnet.Session) {
-	defer session.Close()
+func (srv *TCPServer) sessionLoop(client *client.Client) {
+	message, err := client.Receive()
+	if err != nil {
+		logx.Errorf("[sessionLoop] client.Receive error: %v", err)
+		_ = client.Close()
+		return
+	}
+
+	// 登陆校验
+	err = client.Login(message)
+	if err != nil {
+		logx.Errorf("[sessionLoop] client.Login error: %v", err)
+		_ = client.Close()
+		return
+	}
+
+	// 定时发送心跳给客户端保活
+	go client.HeartBeat()
+
 	for {
-		msg, err := session.Receive()
+		message, err := client.Receive()
 		if err != nil {
-			fmt.Println("Receive err")
-			panic(err)
+			logx.Errorf("[sessionLoop] client.Receive error: %v", err)
+			_ = client.Close()
+			return
 		}
-		// TODO 直接返回一样的内容
-		if err := session.SendSample(*msg); err != nil {
-			fmt.Println("resend err")
-			panic(err)
+		err = client.HandlePackage(message)
+		if err != nil {
+			logx.Errorf("[sessionLoop] client.HandleMessage error: %v", err)
 		}
 	}
-}
-func (srv *TCPServer) Close() {
-	srv.Server.Close()
 }
 
 func (srv *TCPServer) KqHeart() {

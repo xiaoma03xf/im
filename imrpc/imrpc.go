@@ -16,6 +16,8 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
+// goctl rpc protoc imrpc.proto --go_out=. --go-grpc_out=. --zrpc_out=.
+
 var configFile = flag.String("f", "etc/imrpc.yaml", "the config file")
 
 func main() {

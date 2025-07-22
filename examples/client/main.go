@@ -6,8 +6,15 @@ import (
 	"net"
 	"os"
 	"zeroim/common/libnet"
+	"zeroim/imrpc/imrpcclient"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/proto"
+)
+
+var (
+	token   string
+	toToken string
 )
 
 func main() {
@@ -15,26 +22,74 @@ func main() {
 
 	conn, err := net.Dial("tcp", "127.0.0.1:9898")
 	if err != nil {
-		fmt.Printf("Error connection:%v\n", err)
+		fmt.Println("Error connecting:", err)
 		return
 	}
+	defer conn.Close()
+
 	fmt.Println("Connected to server.")
 
-	protocol := libnet.NewIMProtocol()
-	coder := protocol.NewCodec(conn)
+	fmt.Println("请输入聊天对象Token:")
+	chatWithToken()
 
-	go readServerResponse(coder)
+	fmt.Println("请输入你的Token:")
+
+	protocol := libnet.NewIMProtocol()
+	codec := protocol.NewCodec(conn)
+
+	go readServerResponse(codec)
+
+	err = login(codec)
+	if err != nil {
+		panic(err)
+	}
 
 	for {
 		reader := bufio.NewReader(os.Stdin)
 		text, _ := reader.ReadString('\n')
-		if err := coder.Send(libnet.Message{
-			Body: []byte(text),
-		}); err != nil {
-			fmt.Printf("send message err:%v\n", err)
+
+		msgReq := &imrpcclient.PostMsg{
+			Token:   token,
+			ToToken: toToken,
+			Msg:     text,
+		}
+		msgData, err := proto.Marshal(msgReq)
+		if err != nil {
+			panic(err)
+		}
+		msg := libnet.Message{
+			Body: msgData,
+		}
+		err = codec.Send(msg)
+		if err != nil {
+			fmt.Printf("send error: %v\n", err)
 		}
 	}
 }
+
+func login(codec libnet.Codec) error {
+	reader := bufio.NewReader(os.Stdin)
+	text, _ := reader.ReadString('\n')
+
+	token = text
+	loginReq := &imrpcclient.LoginRequest{
+		Token:         token,
+		Authorization: "Bearer token",
+	}
+	loginData, err := proto.Marshal(loginReq)
+	if err != nil {
+		panic(err)
+	}
+	msg := libnet.Message{Body: loginData}
+	return codec.Send(msg)
+}
+
+func chatWithToken() {
+	reader := bufio.NewReader(os.Stdin)
+	text, _ := reader.ReadString('\n')
+	toToken = text
+}
+
 func readServerResponse(codec libnet.Codec) {
 	for {
 		msg, err := codec.Receive()

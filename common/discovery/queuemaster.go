@@ -13,7 +13,7 @@ import (
 type QueueMaster struct {
 	members  map[string]kq.KqConf
 	cli      *clientv3.Client
-	rootPath string
+	rootPath string // edge
 	observer QueueObserver
 }
 

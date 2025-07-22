@@ -22,6 +22,7 @@ type Server struct {
 func NewServer(name string, l net.Listener, p libnet.Protocol, sendChanSize int) *Server {
 	return &Server{
 		Name:         name,
+		Manager:      libnet.NewManager(name),
 		Listener:     l,
 		Protocol:     p,
 		SendChanSize: sendChanSize,

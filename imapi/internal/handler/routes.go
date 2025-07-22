@@ -15,10 +15,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				Method:  http.MethodGet,
-				Path:    "/from/:name",
-				Handler: ImapiHandler(serverCtx),
+				Method:  http.MethodPost,
+				Path:    "/send/msg",
+				Handler: SendMsgHandler(serverCtx),
 			},
 		},
+		rest.WithPrefix("/v1/imapi"),
 	)
 }
