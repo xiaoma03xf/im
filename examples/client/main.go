@@ -17,6 +17,9 @@ var (
 	toToken string
 )
 
+func DNSServerConn(network string, address string) (net.Conn, error) {
+	return nil, nil
+}
 func main() {
 	logx.DisableStat()
 
@@ -48,6 +51,7 @@ func main() {
 		reader := bufio.NewReader(os.Stdin)
 		text, _ := reader.ReadString('\n')
 
+		// 发送的消息里面绑定了 token 和 toToken 存储在message.Body中
 		msgReq := &imrpcclient.PostMsg{
 			Token:   token,
 			ToToken: toToken,

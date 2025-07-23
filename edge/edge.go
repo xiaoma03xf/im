@@ -38,6 +38,7 @@ func main() {
 
 	go tcpServer.HandleRequest()
 	go tcpServer.KqHeart()
+	go tcpServer.RegisterEdge()
 
 	fmt.Printf("Starting tcp server at %s \n", c.TCPListenOn)
 

@@ -3,6 +3,10 @@ ListenOn: 0.0.0.0:8888
 TCPListenOn: 0.0.0.0:9898
 SendChanSize: 1024
 
+## 华北服务 Longitude 经度
+Longitude: 116.3912757
+Latitude: 39.906217
+
 Etcd:
   Hosts:
   - 127.0.0.1:2379
@@ -23,3 +27,7 @@ IMRpc:
     Hosts:      
     - 127.0.0.1:2379
     Key: imrpc.rpc
+
+BizRedis:
+  Host: 127.0.0.1:6379
+  Type: node

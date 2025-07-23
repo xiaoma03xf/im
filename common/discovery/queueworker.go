@@ -37,6 +37,7 @@ func (q *QueueWorker) HeartBeat() {
 	if err != nil {
 		panic(err)
 	}
+	// etcd key: edge_01, value为该edge所绑定的kafka配置
 	q.register(string(value), context.Background())
 }
 func (q *QueueWorker) register(value string, ctx context.Context) {
@@ -45,7 +46,6 @@ func (q *QueueWorker) register(value string, ctx context.Context) {
 		panic(err)
 	}
 	leaseId := leaseGrantResp.ID
-	logx.Infof("leaseID: %x", leaseId)
 	kv := clientv3.NewKV(q.client)
 	putResp, err := kv.Put(ctx, q.key, value, clientv3.WithLease(leaseId))
 	if err != nil {

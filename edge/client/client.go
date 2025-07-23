@@ -27,10 +27,10 @@ func NewClient(manager *libnet.Manager, session *libnet.Session, imrpc imrpcclie
 	}
 }
 
-func (c *Client) Login(msg *libnet.Message) error {
+func (c *Client) Login(msg *libnet.Message) (token string, sessionId string, err error) {
 	loginReq, err := makeLoginMessage(msg)
 	if err != nil {
-		return err
+		return "", "", err
 	}
 	c.Session.SetToken(loginReq.Token)
 	c.Manager.AddSession(c.Session)
@@ -47,7 +47,7 @@ func (c *Client) Login(msg *libnet.Message) error {
 		if e != nil {
 			logx.Errorf("[Login] client.Send error: %v", e)
 		}
-		return err
+		return "", "", err
 	}
 
 	msg.Status = 0
@@ -57,7 +57,7 @@ func (c *Client) Login(msg *libnet.Message) error {
 		logx.Errorf("[Login] client.Send error: %v", err)
 	}
 
-	return err
+	return c.Session.Token(), c.Session.Session().String(), nil
 }
 
 func (c *Client) Receive() (*libnet.Message, error) {
@@ -127,5 +127,6 @@ func makePostMessage(sessionId string, msg *libnet.Message) *imrpcclient.PostMsg
 	postMessageReq.Seq = msg.Seq
 	postMessageReq.SessionId = sessionId
 
+	logx.Infof("postMsg token:%v, toToken:%v\n", postMessageReq.Token, postMessageReq.ToToken)
 	return &postMessageReq
 }

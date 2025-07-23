@@ -132,6 +132,9 @@ func (c *imCodec) Receive() (*Message, error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(buf) < 2 {
+		return nil, io.EOF
+	}
 
 	var msg Message
 	headerLen := binary.BigEndian.Uint16(buf[headerOffset:verOffset])       // 包头长度 2bytes

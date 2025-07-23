@@ -42,6 +42,7 @@ func (l *MqLogic) Consume(ctx context.Context, _, val string) error {
 	if len(msg.ToToken) > 0 {
 		// ToToken, GetTokenSessions寻找当前kafka集群(eg: edge_01)
 		// 消息发往当前kafka, kafka消费时应该确定把信息发往与其连接的哪个, tcp连接
+		// Manager 管理当前节点下 edge_01 的所有连接，根据当前 token 获取对应的连接
 		sessions := l.server.Manager.GetTokenSessions(msg.ToToken)
 		for i := range sessions {
 			s := sessions[i]

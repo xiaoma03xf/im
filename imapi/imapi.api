@@ -10,6 +10,13 @@ type (
 		CreateTime int64  `json:"createTime"`
 		Content    string `json:"content"`
 	}
+
+	SelectServerRequest {
+		IP    string  `json:"id"`
+	}
+	SelectServerResponse{
+		
+	}
 )
 
 @server (

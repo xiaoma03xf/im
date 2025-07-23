@@ -1,7 +1,6 @@
 package socket
 
 import (
-	"crypto/tls"
 	"errors"
 	"fmt"
 	"io"
@@ -74,14 +73,14 @@ func NewServe(name, address string, protocol libnet.Protocol, sendChanSize int) 
 	return NewServer(name, listener, protocol, sendChanSize), nil
 }
 
-func NewTlsServe(name string, config *tls.Config, address string, protocol libnet.Protocol, sendChanSize int) (*Server, error) {
-	addr, err := net.ResolveTCPAddr("tcp", address)
-	if err != nil {
-		return nil, err
-	}
-	listener, err := tls.Listen("tcp", addr.String(), config)
-	if err != nil {
-		return nil, err
-	}
-	return NewServer(name, listener, protocol, sendChanSize), nil
-}
+// func NewTlsServe(name string, config *tls.Config, address string, protocol libnet.Protocol, sendChanSize int) (*Server, error) {
+// 	addr, err := net.ResolveTCPAddr("tcp", address)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	listener, err := tls.Listen("tcp", addr.String(), config)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return NewServer(name, listener, protocol, sendChanSize), nil
+// }
